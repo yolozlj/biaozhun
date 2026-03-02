@@ -1,0 +1,6 @@
+-e node_modules/
+dist/
+.env
+.DS_Store
+crawler/__pycache__/
+*.pyc
