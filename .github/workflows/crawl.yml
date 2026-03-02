@@ -1,0 +1,36 @@
+-e name: 每日爬取标准数据
+on:
+  schedule:
+    - cron: '0 17 * * *' # 每天凌晨1点（UTC时间17点）
+  workflow_dispatch: # 支持手动触发
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: 设置Python环境
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 安装依赖
+        run: |
+          cd crawler
+          pip install -r requirements.txt
+
+      - name: 运行爬虫
+        run: |
+          cd crawler
+          python spider.py
+
+      - name: 提交更新
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+          message: "🔄 自动更新标准数据"
